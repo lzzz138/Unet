@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-class DoubleConv:
+class DoubleConv(nn.Module):
     def __init__(self,input_channels,out_channels):
         super().__init__()
         self.double_conv=nn.Sequential(
@@ -18,17 +18,17 @@ class DoubleConv:
         return self.double_conv(x)
 
 
-class Down:
+class Down(nn.Module):
     def __init__(self,input_channels,out_channels):
         super().__init__()
         self.down=nn.Sequential(
-            F.max_pool2d(2),
+            nn.MaxPool2d(2),
             DoubleConv(input_channels,out_channels)
         )
     def forward(self,x):
-        return self.up(x)
+        return self.down(x)
     
-class Up:
+class Up(nn.Module):
     def __init__(self,input_channels,out_channels):
         super().__init__()
         self.up=nn.ConvTranspose2d(input_channels,input_channels//2,kernel_size=2,stride=2)
@@ -41,7 +41,7 @@ class Up:
         x1=torch.cat([x1,x2],dim=1)
         return self.conv(x1)
 
-class Out:
+class Out(nn.Module):
     def __init__(self,input_channels,out_channels):
         super().__init__()
         self.out=nn.Conv2d(input_channels,out_channels,kernel_size=1)
@@ -50,7 +50,7 @@ class Out:
 
 
 
-class UNet:
+class UNet(nn.Module):
     def __init__(self,input_channels,num_classes):
         super().__init__()
         self.conv=DoubleConv(input_channels,64)
@@ -75,4 +75,10 @@ class UNet:
         x9=self.up4(x8,x1)
         return self.out(x9)
 
+
+if __name__=="__main__":
+    net=UNet(3,2)
+    a=torch.rand(size=(4,3,512,512))
+    b=net(a)
+    print(b.shape)
         
