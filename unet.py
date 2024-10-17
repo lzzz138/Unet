@@ -50,7 +50,7 @@ class Out:
 
 
 
-class Unet:
+class UNet:
     def __init__(self,input_channels,num_classes):
         super().__init__()
         self.conv=DoubleConv(input_channels,64)
