@@ -38,7 +38,8 @@ class ISBI_Dataset(data.Dataset):
 
         #将mask转换为单通道
         mask=cv2.cvtColor(mask,cv2.COLOR_BGR2GRAY)
-
+        if mask.max()>1:
+            mask=mask/255
         return self.as_tensor(img),self.as_tensor(mask)
 
     def __len__(self):
